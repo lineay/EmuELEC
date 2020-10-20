@@ -176,6 +176,7 @@ case ${PLATFORM} in
 		;;
 	"amiga"|"amigacd32")
 		if [ "$EMU" = "AMIBERRY" ]; then
+		set_kill_keys "amiberry"
 		RUNTHIS='${TBASH} /usr/bin/amiberry.start "${ROMNAME}"'
 		fi
 		;;
@@ -226,6 +227,10 @@ case ${PLATFORM} in
 		set_kill_keys "PPSSPPSDL"
 		RUNTHIS='${TBASH} /usr/bin/ppsspp.sh "${ROMNAME}"'
 		fi
+		if [ "$EMU" = "PPSSPPSAOLD" ]; then
+		sset_kill_keys "PPSSPPSDLOLD"
+		RUNTHIS='${TBASH} /usr/bin/ppssppold.sh "${ROMNAME}"'
+		fi
 		;;
 	"neocd")
 		if [ "$EMU" = "fbneo" ]; then
@@ -250,6 +255,16 @@ if [[ ${PLATFORM} == "ports" ]]; then
 	EMU="${PORTCORE%% *}_libretro"  # until a space is found
 	PORTSCRIPT="${arguments##*-SC}"  # read from -SC onwards
 fi
+
+if [[ ${PLATFORM} == "psx" ]]; then
+	if [ -f "/storage/roms/psx/${ROMNAMETMP}.bios" ]; then
+			cp "/storage/roms/psx/${ROMNAMETMP}.bios" "/storage/roms/bios/scph101.bin"
+	else
+			cp "/storage/roms/psx/scph7001.bios" "/storage/roms/bios/scph101.bin"
+	fi
+fi
+
+${TBASH} /emuelec/scripts/setres.sh
 
 RUNTHIS='/usr/bin/retroarch $VERBOSE -L /tmp/cores/${EMU}.so --config ${RATMPCONF} "${ROMNAME}"'
 CONTROLLERCONFIG="${arguments#*--controllers=*}"
@@ -355,7 +370,7 @@ fi
 [[ "$EE_DEVICE" == "Amlogic-ng" ]] && /storage/.config/emuelec/bin/fbfix
 
 # Show exit splash
-${TBASH} /emuelec/scripts/show_splash.sh exit
+# ${TBASH} /emuelec/scripts/show_splash.sh exit
 
 # Kill jslisten, we don't need to but just to make sure, dot not kill if using OdroidGoAdvance
 [[ "$EE_DEVICE" != "OdroidGoAdvance" ]] && killall jslisten
@@ -368,7 +383,7 @@ fi
 #{log_addon}#
 
 # Return to default mode
-${TBASH} /emuelec/scripts/setres.sh
+${TBASH} /emuelec/scripts/setres.sh ES
 
 # reset audio to default
 set_audio default

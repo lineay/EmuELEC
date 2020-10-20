@@ -25,7 +25,7 @@ DURATION="5"
 PLATFORM=${PLATFORM,,}
 
 case $PLATFORM in
- "arcade"|"fba"|"fbn"|"neogeo"|"mame"|cps*)
+ "arcade"|"fbn"|"fbneo"|"fba"|"neogeo"|"mame"|cps*)
    PLATFORM="arcade"
   ;;
  "retropie"|"setup")
